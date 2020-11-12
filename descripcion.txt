@@ -1,0 +1,5 @@
+Descripción del proyecto:
+
+Dibujaremos a un minecraft steve dentro de una cueva (representada por los planos X, Y y Z positivos), 
+este agarrará una antorcha la cual será la fuente de la iluminación, y tendrá un movimiento para simular 
+la flama.
