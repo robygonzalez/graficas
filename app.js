@@ -28,30 +28,17 @@ var fragmentShaderText =
     ].join('\n');
 
 var InitDemo = function () {
-    console.log('This is working');
-
-    var canvas = document.getElementById('game-surface');
+    var canvas = document.getElementById('canvas');
     var gl = canvas.getContext('webgl');
 
-    if (!gl) {
-        console.log('WebGL not supported, falling back on experimental-webgl');
-        gl = canvas.getContext('experimental-webgl');
-    }
-
-    if (!gl) {
-        alert('Your browser does not support WebGL');
-    }
-
-    gl.clearColor(0.75, 0.85, 0.8, 1.0);
+    gl.clearColor(0, 0, 0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
     gl.frontFace(gl.CCW);
     gl.cullFace(gl.BACK);
 
-    //
     // Create shaders
-    // 
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
 
@@ -59,36 +46,17 @@ var InitDemo = function () {
     gl.shaderSource(fragmentShader, fragmentShaderText);
 
     gl.compileShader(vertexShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-        console.error('ERROR compiling vertex shader!', gl.getShaderInfoLog(vertexShader));
-        return;
-    }
-
     gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-        console.error('ERROR compiling fragment shader!', gl.getShaderInfoLog(fragmentShader));
-        return;
-    }
 
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error('ERROR linking program!', gl.getProgramInfoLog(program));
-        return;
-    }
     gl.validateProgram(program);
-    if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-        console.error('ERROR validating program!', gl.getProgramInfoLog(program));
-        return;
-    }
 
-    //
-    // Create buffer
-    //
-    var torsoVertices =
+    var Vertices =
         [ // X, Y, Z           R, G, B
+        //Torso
             // Front
             -2.0, 1.0, -1.0, 0.05, 0.68, 0.68,
             -2.0, 1.0, 2.0, 0.05, 0.68, 0.68,
@@ -118,39 +86,167 @@ var InitDemo = function () {
             -2.0, 0, -1.0, 0.05, 0.68, 0.68,
             -2.0, 0, 2.0, 0.05, 0.68, 0.68,
             2.0, 0, 2.0, 0.05, 0.68, 0.68,
-            2.0, 0, -1.0, 0.05, 0.68, 0.68,
+            2.0, 0, -1.0, 0.05, 0.68, 0.68,          
+        //Head
+            // Front
+            -1.0, 2.0, 2.0, 0.66, 0.49, 0.39,
+            -1.0, 2.0, 4.0, 0.66, 0.49, 0.39,
+            1.0, 2.0, 4.0, 0.66, 0.49, 0.39,
+            1.0, 2.0, 2.0, 0.66, 0.49, 0.39,
+            // Left
+            -1.0, 2.0, 4.0, 0.54, 0.27, 0.07,
+            -1.0, 0, 4.0, 0.54, 0.27, 0.07,
+            -1.0, 0, 2.0, 0.54, 0.27, 0.07,
+            -1.0, 2.0, 2.0, 0.54, 0.27, 0.07,
+            // Right
+            1.0, 2.0, 4.0, 0.54, 0.27, 0.07,
+            1.0, 0.0, 4.0, 0.54, 0.27, 0.07,
+            1.0, 0.0, 2.0, 0.54, 0.27, 0.07,
+            1.0, 2.0, 2.0, 0.54, 0.27, 0.07,
+            // Top
+            1.0, 2.0, 4.0, 0.54, 0.27, 0.07,
+            1.0, 0.0, 4.0, 0.54, 0.27, 0.07,
+            -1.0, 0.0, 4.0, 0.54, 0.27, 0.07,
+            -1.0, 2.0, 4.0, 0.54, 0.27, 0.07,
+            // Bottom
+            1.0, 2.0, 2.0, 0.66, 0.49, 0.39,
+            1.0, 0, 2.0, 0.66, 0.49, 0.39,
+            -1.0, 0, 2.0, 0.66, 0.49, 0.39,
+            -1.0, 2.0, 2.0, 0.66, 0.49, 0.39,
+            // Back
+            -1.0, 0, 2.0, 0.54, 0.27, 0.07,
+            -1.0, 0, 4.0, 0.54, 0.27, 0.07,
+            1.0, 0, 4.0, 0.54, 0.27, 0.07,
+            1.0, 0, 2.0, 0.54, 0.27, 0.07
+        //Legs
+            // Front
+            -1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            -1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            // Left
+            -1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            -1.0, 0, -1.0, 0.28, 0.27, 0.59,
+            -1.0, 0, -3.0, 0.28, 0.27, 0.59,
+            -1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            // Right
+            1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 0.0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 0.0, -3.0, 0.28, 0.27, 0.59,
+            1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            // Top
+            1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 0.0, -1.0, 0.28, 0.27, 0.59,
+            -1.0, 0.0, -1.0, 0.28, 0.27, 0.59,
+            -1.0, 1.0, -1.0, 0.28, 0.27, 0.59,
+            // Bottom
+            1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            1.0, 0, -3.0, 0.28, 0.27, 0.59,
+            -1.0, 0, -3.0, 0.28, 0.27, 0.59,
+            -1.0, 1.0, -3.0, 0.28, 0.27, 0.59,
+            // Back
+            -1.0, 0, -3.0, 0.28, 0.27, 0.59,
+            -1.0, 0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 0, -1.0, 0.28, 0.27, 0.59,
+            1.0, 0, -3.0, 0.28, 0.27, 0.59,
+        //Shoes
+            // Front
+            -1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            -1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            // Left
+            -1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            -1.0, 0, -3.0, 0.19, 0.19, 0.16,
+            -1.0, 0, -4.0, 0.19, 0.19, 0.16,
+            -1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            // Right
+            1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 0.0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 0.0, -4.0, 0.19, 0.19, 0.16,
+            1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            // Top
+            1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 0.0, -3.0, 0.19, 0.19, 0.16,
+            -1.0, 0.0, -3.0, 0.19, 0.19, 0.16,
+            -1.0, 1.0, -3.0, 0.19, 0.19, 0.16,
+            // Bottom
+            1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            1.0, 0, -4.0, 0.19, 0.19, 0.16,
+            -1.0, 0, -4.0, 0.19, 0.19, 0.16,
+            -1.0, 1.0, -4.0, 0.19, 0.19, 0.16,
+            // Back
+            -1.0, 0, -4.0, 0.19, 0.19, 0.16,
+            -1.0, 0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 0, -3.0, 0.19, 0.19, 0.16,
+            1.0, 0, -4.0, 0.19, 0.19, 0.16,
         ];
 
     var boxIndices =
         [
+        //torso
             // Top
             0, 1, 2,
             0, 2, 3,
-
             // Left
             5, 4, 6,
             6, 4, 7,
-
             // Right
             8, 9, 10,
             8, 10, 11,
-
             // Front
             13, 12, 14,
             15, 14, 12,
-
             // Back
             16, 17, 18,
             16, 18, 19,
-
             // Bottom
             21, 20, 22,
-            22, 20, 23
+            22, 20, 23,
+        //head
+            24, 25, 26, // Top
+            24, 26, 27, // Top
+            29, 28, 30, // Left
+            30, 28, 31, // Left
+            32, 33, 34, // Right
+            32, 34, 35, // Right
+            37, 36, 38, // Front
+            39, 38, 36, // Front 
+            40, 41, 42, // Back
+            40, 42, 43, // Back
+            45, 44, 46, // Bottom
+            46, 44, 47, // Bottom
+        /*/Legs
+            48, 49, 50, // Top
+            48, 50, 51, // Top
+            53, 52, 54, // Left
+            54, 52, 55, // Left
+            56, 57, 58, // Right
+            56, 58, 59, // Right
+            61, 60, 62, // Front
+            63, 62, 60, // Front
+            64, 65, 66, // Back
+            64, 66, 67, // Back
+            69, 68, 70, // Bottom
+            70, 68, 71, // Bottom
+        //Shoes
+            72, 73, 74, // Top
+            72, 74, 75, // Top
+            77, 76, 78, // Left
+            78, 76, 79, // Left
+            80, 81, 82, // Right 
+            80, 82, 83, // Right 
+            85, 84, 86, // Front
+            87, 86, 84, // Front
+            88, 89, 90, // Back
+            88, 90, 91, // Back
+            93, 92, 94, // Bottom
+            94, 92, 95, // Bottom */
         ];
 
     var boxVertexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, boxVertexBufferObject);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(torsoVertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(Vertices), gl.STATIC_DRAW);
 
     var boxIndexBufferObject = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boxIndexBufferObject);
@@ -189,7 +285,7 @@ var InitDemo = function () {
     var viewMatrix = new Float32Array(16);
     var projMatrix = new Float32Array(16);
     mat4.identity(worldMatrix);
-    mat4.lookAt(viewMatrix, [0, 0, -8], [0, 0, 0], [0, 1, 0]);
+    mat4.lookAt(viewMatrix, [0, 0, -16], [0, 0, 0], [0, 1, 0]);
     mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.clientWidth / canvas.clientHeight, 0.1, 1000.0);
 
     gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
@@ -199,9 +295,6 @@ var InitDemo = function () {
     var xRotationMatrix = new Float32Array(16);
     var yRotationMatrix = new Float32Array(16);
 
-    //
-    // Main render loop
-    //
     var identityMatrix = new Float32Array(16);
     mat4.identity(identityMatrix);
     var angle = 0;
@@ -212,7 +305,7 @@ var InitDemo = function () {
         mat4.mul(worldMatrix, yRotationMatrix, xRotationMatrix);
         gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 
-        gl.clearColor(0.75, 0.85, 0.8, 1.0);
+        gl.clearColor(0, 0, 0, 1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, boxIndices.length, gl.UNSIGNED_SHORT, 0);
 
