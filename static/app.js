@@ -1,8 +1,13 @@
-import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js';
+import * as THREE from './three_library.js';
 
 function main() {
     const canvas = document.querySelector('#c');
-    const renderer = new THREE.WebGLRenderer({ canvas });
+    var renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+    });
+    renderer.setClearColor (0xff0000, 0);
+    renderer.autoClearColor = false;
 
     const fov = 75;
     const aspect = 2;  // the canvas default
@@ -12,14 +17,15 @@ function main() {
     camera.position.z = 5;
 
     const scene = new THREE.Scene();
-
     {
         const color = 0xFFFFFF;
         const intensity = 1;
         const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(1, 2, 4);
+        light.position.set(-1, 2, 4);
         scene.add(light);
     }
+
+    scene.background = new THREE.Color( 0x000000 );
 
     const headGeometry = new THREE.BoxGeometry(2, 2, 2); //widht, height, depth
     const torsoGeometry = new THREE.BoxGeometry(3, 2, 3);
@@ -28,10 +34,8 @@ function main() {
 
     function makeInstance(geometry, color, x) {
         const material = new THREE.MeshPhongMaterial({ color });
-
         const cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
-
         cube.position.x = x;
 
         return cube;
@@ -47,9 +51,10 @@ function main() {
     }
 
     const loader = new THREE.TextureLoader();
+    scene.background = loader.load('./images/Endportal.jpg')
     const materials = [
         new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_top.jpeg') }), //top
-        new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_top.jpg') }), //bottom
+        new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_top.jpeg') }), //bottom
         new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_front.jpg') }), //front
         new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_back.jpg') }), //back
         new THREE.MeshBasicMaterial({ map: loader.load('https://robygonzalez.github.io/graficas/images/head_right.jpg') }), //right
@@ -57,15 +62,30 @@ function main() {
     ];
 
     const cubes = [
-        makeTexturedInstance(headGeometry, materials, -3.5), //geomtry, color, x
+        makeTexturedInstance(headGeometry, materials, -3.5), //geometry, color, x
         makeInstance(torsoGeometry, 0x0eaeae, -1),
         makeInstance(legsGeometry, 0x494697, 1.5),
         makeInstance(shoesGeometry, 0x6b6b6b, 2.5),
     ];
 
+    function resizeRendererToDisplaySize(renderer) {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+        }
+        return needResize;
+    }
+
     function render(time) {
         time *= 0.001;  // convert time to seconds
-
+        if (resizeRendererToDisplaySize(renderer)) {
+            const canvas = renderer.domElement;
+            camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            camera.updateProjectionMatrix();
+        }
         cubes.forEach((cube, ndx) => {
             const speed = 1 + 1 * .1;
             const rot = time * speed;
@@ -77,7 +97,6 @@ function main() {
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
-
 }
 
-main();
+window.onload = main();
