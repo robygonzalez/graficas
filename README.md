@@ -8,4 +8,4 @@ Luis Felipe Miranda A00820799
 To run this application you must have express library installed, 
 due to the static dependencies of this project.
 
-Run "http-server" (install globally with npm i --g htt-server) in terminal and open "https://localhost:8080" to view the code run.
+Run "http-server" (install globally with npm i --g htt-server) in terminal and open "192.168.1.70:8080" in your browser to view the code run.
