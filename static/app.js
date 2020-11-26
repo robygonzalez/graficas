@@ -1,4 +1,4 @@
-import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r122/build/three.module.js';
+import * as THREE from './three_library.js';
 
 function main() {
     const canvas = document.querySelector('#c');
@@ -80,4 +80,4 @@ function main() {
 
 }
 
-main();
+window.onload = main();
