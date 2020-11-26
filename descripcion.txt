@@ -2,4 +2,7 @@ Descripción del proyecto:
 
 Dibujaremos a un minecraft steve sobre un campo estrellado,
 este estará flotando y rotando en el espacio para que se puedan ver bien
-todos sus lados.
+todos sus lados. la iluminación consiste en iluminar la figura como si la
+cámara tuviera flash, es decir que el lado viendo hacia la cámara es el
+más iluminado, y el lado "trasero" es el más oscuro. Usamos texturas para la
+cara del personaje
